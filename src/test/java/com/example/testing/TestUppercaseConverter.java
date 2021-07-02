@@ -11,11 +11,10 @@ import java.time.Duration;
 @SpringBootTest
 public class TestUppercaseConverter {
 
-    final TestPublisher<String> testPublisher = TestPublisher.create();
 
     @Test
     void testUpperCase() {
-
+        TestPublisher<String> testPublisher = TestPublisher.create();
         UppercaseConverter uppercaseConverter = new UppercaseConverter(testPublisher.flux());
 
         StepVerifier.create(uppercaseConverter.getUpperCase())
@@ -29,9 +28,10 @@ public class TestUppercaseConverter {
         TestPublisher<String> testPublishr = TestPublisher
                 .createNoncompliant(TestPublisher.Violation.ALLOW_NULL);
 
-        StepVerifier.create( testPublishr
+        StepVerifier.create( testPublishr)
+                .then(()-> testPublishr
                         .emit("1", "2", null, "3"))
-                .thenAwait(Duration.ofSeconds(10))
+                .expectNext("1", "2", null, "3")
                 .expectComplete()
                 .verify();
     }
