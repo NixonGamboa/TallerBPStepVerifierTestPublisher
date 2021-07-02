@@ -6,6 +6,8 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 import reactor.test.publisher.TestPublisher;
 
+import java.time.Duration;
+
 @SpringBootTest
 public class TestUppercaseConverter {
 
@@ -21,5 +23,16 @@ public class TestUppercaseConverter {
                 .expectNext("DATOS", "GENERADOS", "SOFKA")
                 .verifyComplete();
     }
+    @Test
+    void testUpperCaseError() {
 
+        TestPublisher<String> testPublishr = TestPublisher
+                .createNoncompliant(TestPublisher.Violation.ALLOW_NULL);
+
+        StepVerifier.create( testPublishr
+                        .emit("1", "2", null, "3"))
+                .thenAwait(Duration.ofSeconds(10))
+                .expectComplete()
+                .verify();
+    }
 }
